@@ -1,0 +1,61 @@
+<%- include('../../partials/header.ejs') %>
+
+<div class="container my-5 py-5 z-depth-1">
+  <!--Section: Content-->
+  <section class="px-md-5 mx-md-5 text-center text-lg-left dark-grey-text">
+    <!--Grid row-->
+    <div class="row d-flex justify-content-center">
+      <!--Grid column-->
+      <div class="col-md-6">
+        <!--Alert-->
+        <div class="alert alert-danger text-center" role="alert"></div>
+        <!--Alert-->
+
+        <!-- Form login -->
+        <form
+          class="text-center"
+          action="/api/login"
+          method="POST"
+          id="login-form"
+        >
+          <p class="h4 mb-4">Login</p>
+
+          <!-- E-mail -->
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-control mb-4"
+            placeholder="E-mail"
+          />
+
+          <!-- Password -->
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control mb-4"
+            placeholder="Password"
+          />
+
+          <!-- Sign up button -->
+          <button class="btn btn-default my-4 btn-block" type="submit">
+            Sign in
+          </button>
+
+          <!-- Register -->
+          <p>Not a member? <a href="/register">Register</a></p>
+        </form>
+
+        <!-- Form login -->
+      </div>
+      <!--Grid column-->
+    </div>
+    <!--Grid row-->
+  </section>
+  <!--Section: Content-->
+</div>
+
+<script src="/auth/login/login.js"></script>
+
+<%- include('../../partials/footer.ejs') %>

@@ -1,0 +1,78 @@
+<%- include('../partials/header.ejs') %>
+
+<div class="container my-4 mb-5">
+  <div class="border border-light p-5">
+    <ul id="chat-messages" class="list-unstyled">
+      <li id="chat-message-input-wrapper" class="white">
+        <div class="form-group basic-textarea">
+          <textarea
+            class="form-control pl-2 my-0"
+            id="chat-message-input"
+            rows="3"
+            placeholder="Type your message here..."
+          ></textarea>
+        </div>
+      </li>
+      <button
+        id="send-message"
+        type="button"
+        class="btn btn-default btn-rounded btn-sm waves-effect waves-light float-right"
+      >
+        Send
+      </button>
+    </ul>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script>
+  const user = {
+    name: '<%- user.name %>',
+    id: '<%- user.id %>'
+  };
+
+  const socket = io.connect('/', {
+    query: `user=${JSON.stringify(user)}`
+  });
+
+  socket.on('message', data => {
+    $(`
+    <li class="d-flex ${
+      user.id === data.user.id ? 'justify-content-end' : 'justify-content-start'
+    }  mb-4">
+        <img
+          src="${data.avatar}"
+          alt="avatar"
+          class="chat-avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1"
+        />
+        <div class="chat-body white p-3 ml-2 z-depth-1">
+          <div class="header">
+            <strong class="primary-font">${data.user.name}</strong>
+            <small class="pull-right text-muted"
+              ><i class="fa fa-clock-o"></i> 12 mins ago</small
+            >
+          </div>
+          <hr class="w-100" />
+          <p class="mb-0">
+              ${data.message}
+          </p>
+        </div>
+      </li>`).insertBefore('#chat-message-input-wrapper');
+  });
+
+  socket.on('connection-message', data => {
+    $(`
+    <div class="text-center mb-3">
+    <h6>${data.message}</h6>
+    </div>`).insertBefore('#chat-message-input-wrapper');
+  });
+
+  $('#send-message').click(() => {
+    socket.emit('message', {
+      message: $('#chat-message-input').val()
+    });
+    $('#chat-message-input').val('');
+  });
+</script>
+
+<%- include('../partials/footer.ejs') %>

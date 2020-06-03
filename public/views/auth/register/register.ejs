@@ -1,0 +1,97 @@
+<%- include('../../partials/header.ejs') %>
+
+<div class="container my-5 py-5 z-depth-1">
+  <!--Section: Content-->
+  <section class="px-md-5 mx-md-5 text-center text-lg-left dark-grey-text">
+    <!--Grid row-->
+    <div class="row d-flex justify-content-center">
+      <!--Grid column-->
+      <div class="col-md-6">
+        <!--Alert-->
+        <div class="alert text-center" role="alert"></div>
+        <!--Alert-->
+
+        <!-- Formm register -->
+        <form
+          class="text-center"
+          action="/api/register"
+          method="POST"
+          id="register-form"
+        >
+          <p class="h4 mb-4">Sign up</p>
+
+          <!-- First name -->
+          <input
+            type="text"
+            id="firstName"
+            name="firstName"
+            class="form-control mb-4"
+            placeholder="First name"
+          />
+
+          <!-- Last name -->
+          <input
+            type="text"
+            id="lastName"
+            name="lastName"
+            class="form-control mb-4"
+            placeholder="Last name"
+          />
+
+          <!-- E-mail -->
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-control mb-4"
+            placeholder="E-mail"
+          />
+
+          <!-- Password -->
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control mb-4"
+            placeholder="Password"
+            aria-describedby="defaultRegisterFormPasswordHelpBlock"
+          />
+
+          <!-- Password Confirmation-->
+          <input
+            type="password"
+            id="passwordConfirmation"
+            name="passwordConfirmation"
+            class="form-control mb-4"
+            placeholder="Repeat password"
+            aria-describedby="defaultRegisterFormPasswordHelpBlock"
+          />
+
+          <!-- Phone number -->
+          <input
+            type="number"
+            id="phoneNumber"
+            name="phoneNumber"
+            class="form-control"
+            placeholder="Phone number"
+            aria-describedby="defaultRegisterFormPhoneHelpBlock"
+          />
+
+          <!-- Sign up button -->
+          <button class="btn btn-default my-4 btn-block" type="submit">
+            Register
+          </button>
+        </form>
+
+        <!-- Form register -->
+      </div>
+      <!--Grid column-->
+    </div>
+    <!--Grid row-->
+  </section>
+  <!--Section: Content-->
+</div>
+
+<script src="/auth/register/register.js"></script>
+
+<%- include('../../partials/footer.ejs') %>
