@@ -20,6 +20,14 @@ const apiAdminUserAuth = (req, res, next) => {
   }
 };
 
+const clientAnonymousAuth = (req, res, next) => {
+  if (!req.session.auth) {
+    return next();
+  } else {
+    return res.redirect('/');
+  }
+};
+
 const clientUserAuth = (req, res, next) => {
   if (req.session.auth && req.session.auth.id) {
     return next();
@@ -49,6 +57,7 @@ const clientAdminAuth = (req, res, next) => {
 module.exports = {
   apiUserAuth,
   apiAdminUserAuth,
+  clientAnonymousAuth,
   clientUserAuth,
   clientAdminAuth
 };

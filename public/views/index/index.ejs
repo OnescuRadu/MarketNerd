@@ -1,5 +1,33 @@
 <%- include('../partials/header.ejs') %>
 
-Hello World!
+<!--START Categories Container-->
+<div class="pb-5">
+  <div class="container">
+    <div class="row text-center pt-4">
+      <div class="col">
+        <h3 class="font-weight-bold">Categories</h3>
+        <hr />
+      </div>
+    </div>
 
+    <!--START Categories-->
+    <div class="row text-center pt-4 category-container"></div>
+    <!--END Categories-->
+  </div>
+</div>
+<!--END Categories Container-->
+
+<!--START Lastest Added Advertisements Container-->
+<div class="container mt-3" style="margin-bottom: 5em">
+  <div class="row text-center">
+    <div class="col">
+      <h3 class="font-weight-bold">Latest added advertisements</h3>
+      <hr />
+    </div>
+  </div>
+  <div class="row latest-advertisement-container"></div>
+</div>
+<!--END Lastest Added Advertisements Container-->
+
+<script src="index/index.js"></script>
 <%- include('../partials/footer.ejs') %>

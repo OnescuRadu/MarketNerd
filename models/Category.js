@@ -6,6 +6,11 @@ const CategorySchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true
+    },
+    icon: {
+      type: String,
+      required: true,
+      trim: true
     }
   },
   {

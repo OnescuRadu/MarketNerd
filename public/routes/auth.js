@@ -1,22 +1,25 @@
 const router = require('express').Router();
+const request = require('request');
+const {
+  clientAnonymousAuth,
+  clientUserAuth
+} = require('../../middleware/authMiddleware');
 
-//TODO ONLY FOR ANONYMOUS
-router.get('/login', (req, res) => {
+router.get('/login', clientAnonymousAuth, (req, res) => {
   return res.render('auth/login/login.ejs', {
     user: { name: null, id: null }
   });
 });
 
-//TODO ONLY FOR ANONYMOUS
-router.get('/register', (req, res) => {
+router.get('/register', clientAnonymousAuth, (req, res) => {
   return res.render('auth/register/register.ejs', {
     user: { name: null, id: null }
   });
 });
 
-//TODO
-router.get('/logout', (req, res) => {
-  return res.render('auth/index.ejs');
+router.get('/logout', clientUserAuth, (req, res) => {
+  req.session.destroy();
+  return res.redirect('/');
 });
 
 module.exports = router;

@@ -1,13 +1,15 @@
 const router = require('express').Router();
 const User = require('../models/User');
 const Role = require('../models/Role');
-const bcrypt = require('bcrypt');
+
 const { validate } = require('indicative/validator');
-const saltRounds = 10;
 const {
   rules: validationRules,
   messages: validationMessages
 } = require('../validation/authValidation');
+
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;

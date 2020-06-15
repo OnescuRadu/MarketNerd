@@ -43,16 +43,23 @@ app.use(
 /* ---Add API routes */
 const authAPI = require('./routes/auth');
 const advertisementAPI = require('./routes/advertisement');
+const categoryAPI = require('./routes/category');
+const subcategoryAPI = require('./routes/subcategory');
+
 app.use('/api', authAPI);
 app.use('/api/advertisement', advertisementAPI);
+app.use('/api/category', categoryAPI);
+app.use('/api/subcategory', subcategoryAPI);
 
 /* ---Add PUBLIC(FRONTEND) routes */
 const authPublic = require('./public/routes/auth');
 const chatPublic = require('./public/routes/chat');
 const indexPublic = require('./public/routes/index');
+const advertisementPublic = require('./public/routes/advertisement');
 app.use(authPublic);
 app.use('/chat', chatPublic);
 app.use(indexPublic);
+app.use(advertisementPublic);
 
 /* ---Start server */
 const PORT = process.env.PORT || 3000;
