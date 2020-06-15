@@ -10,7 +10,7 @@ router.get('/market', (req, res) => {
   });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/advertisement/:id', (req, res) => {
   return res.render('advertisement/advertisement.ejs', {
     user:
       req.session.auth === undefined
