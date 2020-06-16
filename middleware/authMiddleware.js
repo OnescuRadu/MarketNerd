@@ -1,4 +1,21 @@
-const User = require('../models/User');
+const fs = require('fs');
+
+const partialHeaderAuth = fs.readFileSync(
+  './public/views/partials/header-auth.html',
+  'utf8'
+);
+const partialHeaderAnon = fs.readFileSync(
+  './public/views/partials/header-anon.html',
+  'utf8'
+);
+const partialFooter = fs.readFileSync(
+  './public/views/partials/footer.html',
+  'utf8'
+);
+const error401Page = fs.readFileSync(
+  './public/views/error/error-401.html',
+  'utf8'
+);
 
 const apiUserAuth = (req, res, next) => {
   if (req.session.auth && req.session.auth.id) {
@@ -32,9 +49,7 @@ const clientUserAuth = (req, res, next) => {
   if (req.session.auth && req.session.auth.id) {
     return next();
   } else {
-    return res.render('error/401.ejs', {
-      user: { name: null, id: null }
-    });
+    return res.send(partialHeaderAnon + error401Page + partialFooter);
   }
 };
 
@@ -43,14 +58,10 @@ const clientAdminAuth = (req, res, next) => {
     if (req.session.auth.role === 'Admin') {
       return next();
     } else {
-      return res.render('error/401.ejs', {
-        user: { name: null, id: null }
-      });
+      return res.send(partialHeaderAuth + error401Page + partialFooter);
     }
   } else {
-    return res.render('error/401.ejs', {
-      user: { name: null, id: null }
-    });
+    return res.send(partialHeaderAnon + error401Page + partialFooter);
   }
 };
 

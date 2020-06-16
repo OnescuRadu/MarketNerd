@@ -1,12 +1,24 @@
 const router = require('express').Router();
+const fs = require('fs');
+
+const partialHeaderAuth = fs.readFileSync(
+  './public/views/partials/header-auth.html',
+  'utf8'
+);
+const partialHeaderAnon = fs.readFileSync(
+  './public/views/partials/header-anon.html',
+  'utf8'
+);
+const partialFooter = fs.readFileSync(
+  './public/views/partials/footer.html',
+  'utf8'
+);
+const indexPage = fs.readFileSync('./public/views/index/index.html', 'utf8');
 
 router.get('/', (req, res) => {
-  return res.render('index/index.ejs', {
-    user:
-      req.session.auth === undefined
-        ? { name: null, id: null }
-        : { name: req.session.auth.name, id: req.session.auth.id }
-  });
+  const header =
+    req.session.auth === undefined ? partialHeaderAnon : partialHeaderAuth;
+  return res.send(header + indexPage + partialFooter);
 });
 
 module.exports = router;

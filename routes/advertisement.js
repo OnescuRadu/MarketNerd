@@ -21,6 +21,12 @@ router.post('/', apiUserAuth, async (req, res) => {
     used
   } = req.body;
 
+  let usedStatus = false;
+  if (used !== undefined) {
+    usedStatus = true;
+  }
+  req.body.used = usedStatus;
+
   validate(req.body, validationRules, validationMessages)
     .then(async () => {
       try {
@@ -44,7 +50,7 @@ router.post('/', apiUserAuth, async (req, res) => {
                 description: description,
                 price: price,
                 city: city,
-                used: used,
+                used: usedStatus,
                 user: req.session.auth.id
               };
 

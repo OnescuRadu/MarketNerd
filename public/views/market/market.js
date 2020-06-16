@@ -1,7 +1,8 @@
 $(function() {
-  advertisementContainer = $('#advertisement-container');
-  advertisementCategory = $('#advertisement-category');
-  advertisementURL = '/api/advertisement';
+  const categoryId = '5ee7878915abed2ebc216413';
+  const advertisementContainer = $('#advertisement-container');
+  const advertisementCategory = $('#advertisement-category');
+  let advertisementURL = '/api/advertisement';
 
   if (categoryId) {
     $.get(`/api/category/${categoryId}`)

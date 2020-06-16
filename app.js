@@ -12,14 +12,11 @@ app.use(
   })
 );
 
-/* ---Setup Template Engine */
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '/public/views/'));
-app.use(express.static('public/views/'));
-
 /* ---Setup Static Resources */
 app.use('/css', express.static(__dirname + '/node_modules/mdbootstrap/css/'));
 app.use('/js', express.static(__dirname + '/node_modules/mdbootstrap/js/'));
+app.use('/uuid', express.static(__dirname + '/node_modules/uuid/dist/'));
+app.use(express.static('public/views/'));
 
 /* ---Setup database */
 const database = require('./database/database')();
@@ -45,11 +42,13 @@ const authAPI = require('./routes/auth');
 const advertisementAPI = require('./routes/advertisement');
 const categoryAPI = require('./routes/category');
 const subcategoryAPI = require('./routes/subcategory');
+const cityApi = require('./routes/city');
 
 app.use('/api', authAPI);
 app.use('/api/advertisement', advertisementAPI);
 app.use('/api/category', categoryAPI);
 app.use('/api/subcategory', subcategoryAPI);
+app.use('/api/city', cityApi);
 
 /* ---Add PUBLIC(FRONTEND) routes */
 const authPublic = require('./public/routes/auth');
@@ -79,7 +78,7 @@ const io = require('socket.io')(server);
 io.on('connection', socket => {
   {
     const user = JSON.parse(socket.handshake.query.user);
-    const userName = user.name || 'Anonymous';
+    let userName = `${user.name}#${user.id}` || 'Anonymous';
     const userId = user.id || null;
 
     io.sockets.emit('connection-message', {
@@ -98,6 +97,14 @@ io.on('connection', socket => {
         user: { name: userName, id: userId },
         avatar:
           'https://www.shareicon.net/data/512x512/2016/05/24/770137_man_512x512.png'
+      });
+    });
+
+    socket.on('new-username', data => {
+      const oldUserName = userName;
+      userName = data.newUserName;
+      io.sockets.emit('new-username-message', {
+        message: `${oldUserName} changed his name to ${userName}.`
       });
     });
   }

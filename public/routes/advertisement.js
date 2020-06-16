@@ -1,22 +1,44 @@
 const router = require('express').Router();
+const fs = require('fs');
 
-router.get('/market', (req, res) => {
-  return res.render('market/market.ejs', {
-    user:
-      req.session.auth === undefined
-        ? { name: null, id: null }
-        : { name: req.session.auth.name, id: req.session.auth.id },
-    category: req.query.categoryId || null
-  });
+const partialHeaderAuth = fs.readFileSync(
+  './public/views/partials/header-auth.html',
+  'utf8'
+);
+const partialHeaderAnon = fs.readFileSync(
+  './public/views/partials/header-anon.html',
+  'utf8'
+);
+const partialFooter = fs.readFileSync(
+  './public/views/partials/footer.html',
+  'utf8'
+);
+const newAdvertisementPage = fs.readFileSync(
+  './public/views/advertisement/new-advertisement.html',
+  'utf8'
+);
+const advertisementPage = fs.readFileSync(
+  './public/views/advertisement/advertisement.html',
+  'utf8'
+);
+const marketPage = fs.readFileSync('./public/views/market/market.html', 'utf8');
+
+router.get('/advertisement', (req, res) => {
+  const header =
+    req.session.auth === undefined ? partialHeaderAnon : partialHeaderAuth;
+  return res.send(header + newAdvertisementPage + partialFooter);
 });
 
 router.get('/advertisement/:id', (req, res) => {
-  return res.render('advertisement/advertisement.ejs', {
-    user:
-      req.session.auth === undefined
-        ? { name: null, id: null }
-        : { name: req.session.auth.name, id: req.session.auth.id }
-  });
+  const header =
+    req.session.auth === undefined ? partialHeaderAnon : partialHeaderAuth;
+  return res.send(header + advertisementPage + partialFooter);
+});
+
+router.get('/market', (req, res) => {
+  const header =
+    req.session.auth === undefined ? partialHeaderAnon : partialHeaderAuth;
+  return res.send(header + marketPage + partialFooter);
 });
 
 module.exports = router;

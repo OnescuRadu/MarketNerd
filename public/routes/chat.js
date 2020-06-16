@@ -1,17 +1,21 @@
 const router = require('express').Router();
 const { clientUserAuth } = require('../../middleware/authMiddleware');
+const fs = require('fs');
 
-// router.get('/', (req, res) => {
-//   return res.render('chat/chat.ejs', {
-//     user: { name: 'Radu', id: '1231321321' }
-//   });
-// });
+const partialHeaderAuth = fs.readFileSync(
+  './public/views/partials/header-auth.html',
+  'utf8'
+);
+
+const partialFooter = fs.readFileSync(
+  './public/views/partials/footer.html',
+  'utf8'
+);
+
+const chatPage = fs.readFileSync('./public/views/chat/chat.html', 'utf8');
 
 router.get('/', clientUserAuth, (req, res) => {
-  console.log(req.session.auth);
-  return res.render('chat/chat.ejs', {
-    user: { name: req.session.auth.name, id: req.session.auth.id }
-  });
+  return res.send(partialHeaderAuth + chatPage + partialFooter);
 });
 
 module.exports = router;
