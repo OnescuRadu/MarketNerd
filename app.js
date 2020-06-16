@@ -1,8 +1,6 @@
 const express = require('express');
 const app = express();
 const config = require('./config/misc.config');
-const path = require('path');
-let ejs = require('ejs');
 
 /* ---Setup body parser */
 app.use(express.json());
@@ -15,7 +13,6 @@ app.use(
 /* ---Setup Static Resources */
 app.use('/css', express.static(__dirname + '/node_modules/mdbootstrap/css/'));
 app.use('/js', express.static(__dirname + '/node_modules/mdbootstrap/js/'));
-app.use('/uuid', express.static(__dirname + '/node_modules/uuid/dist/'));
 app.use(express.static('public/views/'));
 
 /* ---Setup database */
