@@ -90,6 +90,7 @@ io.on('connection', socket => {
 
     socket.on('message', data => {
       io.sockets.emit('message', {
+        timestamp: new Date(),
         message: `${data.message}`,
         user: { name: userName, id: userId },
         avatar:

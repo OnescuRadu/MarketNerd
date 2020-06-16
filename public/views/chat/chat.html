@@ -75,30 +75,39 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.7/jquery.timeago.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
 <script>
-  //RFC4122 Version 4 compliant UUID
-  //Author: https://stackoverflow.com/a/2117523
-  function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = (Math.random() * 16) | 0,
-        v = c == 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
+  jQuery(document).ready(function() {
+    //jQuery TimeAgo
+    const updateNewTimestamps = () => {
+      jQuery('time.timeago').timeago();
+    };
+
+    //RFC4122 Version 4 compliant UUID
+    //Author: https://stackoverflow.com/a/2117523
+    function uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
+        c
+      ) {
+        var r = (Math.random() * 16) | 0,
+          v = c == 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+    }
+
+    //Socket.io Script
+    const user = {
+      name: 'Anonymous',
+      id: uuidv4()
+    };
+
+    const socket = io.connect('/', {
+      query: `user=${JSON.stringify(user)}`
     });
-  }
 
-  //Socket.io Script
-  const user = {
-    name: 'Anonymous',
-    id: uuidv4()
-  };
-
-  const socket = io.connect('/', {
-    query: `user=${JSON.stringify(user)}`
-  });
-
-  socket.on('message', data => {
-    $(`
+    socket.on('message', data => {
+      $(`
     <li class="d-flex ${
       user.id === data.user.id ? 'justify-content-end' : 'justify-content-start'
     }  mb-4">
@@ -110,8 +119,11 @@
         <div class="chat-body white p-3 ml-2 z-depth-1">
           <div class="header">
             <strong class="primary-font">${data.user.name}</strong>
+            <br />
             <small class="pull-right text-muted"
-              ><i class="fa fa-clock-o"></i> 12 mins ago</small
+              ><i class="fa fa-clock-o"></i><time class="timeago" datetime="${
+                data.timestamp
+              }"></time></small
             >
           </div>
           <hr class="w-100" />
@@ -120,38 +132,40 @@
           </p>
         </div>
       </li>`).insertBefore('#chat-message-input-wrapper');
-  });
-
-  socket.on('connection-message', data => {
-    $(`
-    <div class="text-center mb-3">
-    <h6>${data.message}</h6>
-    </div>`).insertBefore('#chat-message-input-wrapper');
-  });
-
-  socket.on('new-username-message', data => {
-    $(`
-    <div class="text-center mb-3">
-    <h6>${data.message}</h6>
-    </div>`).insertBefore('#chat-message-input-wrapper');
-  });
-
-  $('#send-message').click(() => {
-    socket.emit('message', {
-      message: $('#chat-message-input').val()
+      updateNewTimestamps();
     });
-    $('#chat-message-input').val('');
-  });
 
-  //Change name functionality
-  $('#changeUsernameForm').submit(event => {
-    event.preventDefault();
-    const newUserName = $('#newUsername').val();
-    if (newUsername) {
-      socket.emit('new-username', {
-        newUserName: newUserName
+    socket.on('connection-message', data => {
+      $(`
+    <div class="text-center mb-3">
+    <h6>${data.message}</h6>
+    </div>`).insertBefore('#chat-message-input-wrapper');
+    });
+
+    socket.on('new-username-message', data => {
+      $(`
+    <div class="text-center mb-3">
+    <h6>${data.message}</h6>
+    </div>`).insertBefore('#chat-message-input-wrapper');
+    });
+
+    $('#send-message').click(() => {
+      socket.emit('message', {
+        message: $('#chat-message-input').val()
       });
-    }
-    $('#changeNameModal').modal('hide');
+      $('#chat-message-input').val('');
+    });
+
+    //Change name functionality
+    $('#changeUsernameForm').submit(event => {
+      event.preventDefault();
+      const newUserName = $('#newUsername').val();
+      if (newUsername) {
+        socket.emit('new-username', {
+          newUserName: newUserName
+        });
+      }
+      $('#changeNameModal').modal('hide');
+    });
   });
 </script>
