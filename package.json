@@ -16,6 +16,7 @@
     "bcrypt": "^4.0.1",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "forever": "^3.0.0",
     "indicative": "^7.4.4",
     "mdbootstrap": "^4.19.0",
     "mongoose": "^5.9.16",

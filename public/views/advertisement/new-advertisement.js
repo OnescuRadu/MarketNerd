@@ -18,6 +18,7 @@ $(function() {
   //Fill out subcategory input
   const getSubcategory = categoryId => {
     $.get(`/api/subcategory/${categoryId}`).done(data => {
+      subcategoryInput.empty();
       data.response.map(subcategory => {
         subcategoryInput[0].add(new Option(subcategory.title, subcategory._id));
       });
