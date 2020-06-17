@@ -1,0 +1,6 @@
+module.exports = {
+  ACCESS_KEY: '',
+  SECRET_ACCESS_KEY: '',
+  REGION: '',
+  BUCKET: ''
+};

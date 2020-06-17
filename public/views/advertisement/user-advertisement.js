@@ -1,13 +1,15 @@
 $(function() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const categoryId = urlParams.get('categoryId');
+  const userId = window.location.href.split('/').pop();
   const advertisementContainer = $('#advertisement-container');
-  const advertisementCategory = $('#advertisement-category');
-  let advertisementURL = '/api/advertisement';
+  const advertisementUser = $('#advertisement-user');
+  const userAdvertisementURL = `/api/advertisement/user/${userId}`;
 
   const getAdvertisements = () => {
-    $.get(advertisementURL)
+    $.get(userAdvertisementURL)
       .done(data => {
+        advertisementUser.text(
+          `${data.response[0].user.firstName} ${data.response[0].user.lastName}'s `
+        );
         data.response.map(advertisement => {
           advertisementContainer.append(`
         <div class="col-lg-4 col-sm-6 col-12 mt-4">
@@ -17,11 +19,7 @@ $(function() {
           <div class="view view-cascade overlay">
             <img
               class="card-img-top"
-              src=${
-                advertisement.images.length !== 0
-                  ? advertisement.images[0].href
-                  : 'https://increasify.com.au/wp-content/uploads/2016/08/default-image.png'
-              }
+              src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/img%20(4).jpg"
               alt=""
             />
             <a href="/advertisement/${advertisement._id}">
@@ -63,33 +61,19 @@ $(function() {
       .fail(() => {
         advertisementContainer.append(
           `
-        <h5>Could not retrieve latest added advertisements.</h5>
+        <h5>Could not retrieve users advertisements.</h5>
         `
         );
       });
   };
 
-  if (categoryId) {
-    $.get(`/api/category/${categoryId}`)
-      .done(data => {
-        if (data.response) {
-          advertisementCategory.text(data.response.title);
-          advertisementURL = advertisementURL.concat(`?category=${categoryId}`);
-        } else {
-          advertisementCategory.text(
-            'Category does not exist. Showing all advertisements.'
-          );
-        }
-      })
-      .fail(() => {
-        advertisementCategory.text(
-          'There was an error retrieving the category. Showing all advertisements.'
-        );
-      })
-      .always(() => {
-        getAdvertisements();
-      });
-  } else {
+  if (userId) {
     getAdvertisements();
+  } else {
+    advertisementContainer.append(
+      `
+        <h5>Could not retrieve users advertisements.</h5>
+        `
+    );
   }
 });

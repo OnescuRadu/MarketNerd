@@ -1,4 +1,5 @@
 node_modules
 config/database.config.js
 config/misc.config.js
-
+config/email.config.js
+config/aws.config.js

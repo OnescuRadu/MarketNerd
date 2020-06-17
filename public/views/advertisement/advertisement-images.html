@@ -1,0 +1,53 @@
+<!--START Advertisements Container-->
+<div class="container mt-3 mb-5">
+  <div class="row text-center">
+    <div class="col">
+      <h3 class="font-weight-bold">Advertisement Images</h3>
+      <hr />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="alert-container"></div>
+
+      <div class="table-responsive text-nowrap">
+        <table class="table text-center">
+          <thead>
+            <tr>
+              <th scope="col">Image</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="images-table-body"></tbody>
+        </table>
+      </div>
+
+      <form
+        id="upload-images-form"
+        class="text-center"
+        enctype="multipart/form-data"
+        method="POST"
+        action="/api/advertisement/5ee93eaaacdde5d243235840/image"
+      >
+        <div id="images-alert-container"></div>
+        <input
+          type="file"
+          class="form-control"
+          name="advertisement-image"
+          id="advertisement-image"
+          multiple
+        />
+        <button type="submit" class="btn btn-default btn-rounded">
+          Upload
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<!--END Advertisements Container-->
+<script>
+  console.log(
+    'NOTE: ON ADVERTISEMENT PAGE ADBLOCKER MAY BE BLOCKING THE SCRIPT FILE. ENSURE TO DISABLE ADBLOCK.'
+  );
+</script>
+<script src="/js/views/advertisement/advertisement-images.js"></script>

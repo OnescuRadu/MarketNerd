@@ -13,6 +13,8 @@ app.use(
 /* ---Setup Static Resources */
 app.use('/css', express.static(__dirname + '/node_modules/mdbootstrap/css/'));
 app.use('/js', express.static(__dirname + '/node_modules/mdbootstrap/js/'));
+app.use('/css', express.static(__dirname + '/public/'));
+app.use('/js', express.static(__dirname + '/public/'));
 app.use(express.static('public/views/'));
 
 /* ---Setup database */
@@ -40,12 +42,14 @@ const advertisementAPI = require('./routes/advertisement');
 const categoryAPI = require('./routes/category');
 const subcategoryAPI = require('./routes/subcategory');
 const cityApi = require('./routes/city');
+const userApi = require('./routes/user');
 
 app.use('/api', authAPI);
 app.use('/api/advertisement', advertisementAPI);
 app.use('/api/category', categoryAPI);
 app.use('/api/subcategory', subcategoryAPI);
 app.use('/api/city', cityApi);
+app.use('/api/user', userApi);
 
 /* ---Add PUBLIC(FRONTEND) routes */
 const authPublic = require('./public/routes/auth');

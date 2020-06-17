@@ -1,14 +1,50 @@
 const router = require('express').Router();
+let aws = require('aws-sdk');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const awsConfig = require('../config/aws.config');
 const { validate } = require('indicative/validator');
-const { apiUserAuth } = require('../middleware/authMiddleware');
 const Category = require('../models/Category');
 const Subcategory = require('../models/Subcategory');
 const Advertisement = require('../models/Advertisement');
+const AdvertisementImage = require('../models/AdvertisementImage');
 const City = require('../models/City');
+const { v4: uuid } = require('uuid');
+const { apiUserAuth } = require('../middleware/authMiddleware');
 const {
   rules: validationRules,
   messages: validationMessages
 } = require('../validation/advertisementValidation');
+
+aws.config.update({
+  secretAccessKey: awsConfig.SECRET_ACCESS_KEY,
+  accessKeyId: awsConfig.ACCESS_KEY_ID,
+  region: awsConfig.REGION
+});
+
+const s3 = new aws.S3();
+
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: awsConfig.BUCKET,
+    key: function(req, file, cb) {
+      cb(null, `${uuid()}.${file.mimetype.split('/').pop()}`);
+    }
+  }),
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype == 'image/png' ||
+      file.mimetype == 'image/jpg' ||
+      file.mimetype == 'image/jpeg'
+    ) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+    }
+  }
+});
 
 router.post('/', apiUserAuth, async (req, res) => {
   const {
@@ -84,11 +120,15 @@ router.post('/', apiUserAuth, async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const advertisements = await Advertisement.findById(req.params.id)
+    const advertisements = await Advertisement.findOne({
+      _id: req.params.id,
+      deleted: false
+    })
       .populate('user', 'email firstName lastName')
       .populate('category', 'title')
       .populate('subcategory', 'title')
-      .populate('city', 'title');
+      .populate('city', 'title')
+      .populate('images', 'href');
     return res.send({ response: advertisements });
   } catch (error) {
     return res.status(500).send({ response: error });
@@ -104,34 +144,61 @@ router.get('/', async (req, res) => {
       if (subcategory) {
         advertisements = await Advertisement.find({
           category: category,
-          subcategory: subcategory
+          subcategory: subcategory,
+          deleted: false
         })
           .limit(limit * 1)
           .skip((page - 1) * limit)
           .populate('user', 'email firstName lastName')
           .populate('category', 'title')
           .populate('subcategory', 'title')
-          .populate('city', 'title');
+          .populate('city', 'title')
+          .populate('images', 'href')
+          .sort({ createdAt: -1 });
       } else {
         //Get all advertisements using the given category
-        advertisements = await Advertisement.find({ category: category })
+        advertisements = await Advertisement.find({
+          category: category,
+          deleted: false
+        })
           .limit(limit * 1)
           .skip((page - 1) * limit)
           .populate('user', 'email firstName lastName')
           .populate('category', 'title')
           .populate('subcategory', 'title')
-          .populate('city', 'title');
+          .populate('city', 'title')
+          .populate('images', 'href')
+          .sort({ createdAt: -1 });
       }
     } else {
       //Get all advertisements
-      advertisements = await Advertisement.find({})
+      advertisements = await Advertisement.find({ deleted: false })
         .limit(limit * 1)
         .skip((page - 1) * limit)
         .populate('user', 'email firstName lastName')
         .populate('category', 'title')
         .populate('subcategory', 'title')
-        .populate('city', 'title');
+        .populate('city', 'title')
+        .populate('images', 'href')
+        .sort({ createdAt: -1 });
     }
+    return res.send({ response: advertisements });
+  } catch (error) {
+    return res.status(500).send({ response: error });
+  }
+});
+
+router.get('/user/:id', async (req, res) => {
+  try {
+    const advertisements = await Advertisement.find({
+      user: { _id: req.params.id },
+      deleted: false
+    })
+      .populate('user', 'email firstName lastName')
+      .populate('category', 'title')
+      .populate('subcategory', 'title')
+      .populate('city', 'title')
+      .populate('images', 'href');
     return res.send({ response: advertisements });
   } catch (error) {
     return res.status(500).send({ response: error });
@@ -182,15 +249,19 @@ router.patch('/:id', apiUserAuth, (req, res) => {
                   };
 
                   //Insert the advertisement object into the DB
-                  Advertisement.findOneAndUpdate(advertisementData, error => {
-                    if (error) {
-                      return res.status(500).send({ response: error });
-                    } else {
-                      return res.send({
-                        response: 'Advertisement succesfully updated.'
-                      });
+                  Advertisement.findOneAndUpdate(
+                    { _id: advertisement._id },
+                    { $set: advertisementData },
+                    error => {
+                      if (error) {
+                        return res.status(500).send({ response: error });
+                      } else {
+                        return res.send({
+                          response: 'Advertisement succesfully updated.'
+                        });
+                      }
                     }
-                  });
+                  );
                 } else {
                   return res
                     .status(400)
@@ -224,14 +295,119 @@ router.delete('/:id', apiUserAuth, async (req, res) => {
     //Find the advertisement
     const advertisement = await Advertisement.findById(req.params.id);
     //Check to see if the user that posted the advertisement is the one that is making the request
-    if (advertisement.user === req.session.auth.id) {
-      Advertisement.deleteOne({ _id: req.params.id });
-      return res.send({ response: 'Advertisement succesfully deleted.' });
+    if (advertisement.user.toString() === req.session.auth.id) {
+      Advertisement.findOneAndUpdate(
+        { _id: advertisement._id },
+        { $set: { deleted: true } },
+        error => {
+          if (error) {
+            return res.status(500).send({ response: error });
+          } else {
+            return res.send({
+              response: 'Advertisement succesfully deleted.'
+            });
+          }
+        }
+      );
     } else {
       return res.status(401).send({ response: 'Unauthorized request.' });
     }
   } catch (error) {
     return res.status(500).send({ response: error });
+  }
+});
+
+router.post('/:id/sold', apiUserAuth, async (req, res) => {
+  try {
+    //Find the advertisement
+    const advertisement = await Advertisement.findById(req.params.id);
+    //Check to see if the user that posted the advertisement is the one that is making the request
+    if (advertisement.user.toString() === req.session.auth.id) {
+      if (advertisement.deleted === false) {
+        Advertisement.findOneAndUpdate(
+          { _id: advertisement._id },
+          { $set: { sold: true } },
+          error => {
+            if (error) {
+              return res.status(500).send({ response: error });
+            } else {
+              return res.send({
+                response: 'Advertisement succesfully marked as sold.'
+              });
+            }
+          }
+        );
+      } else {
+        return res.status(400).send({
+          response:
+            'Can not mark as sold an advertisement that has been deleted.'
+        });
+      }
+    } else {
+      return res.status(401).send({ response: 'Unauthorized request.' });
+    }
+  } catch (error) {
+    return res.status(500).send({ response: error });
+  }
+});
+
+const uploadAdvertisementImages = upload.array('advertisement-image');
+
+router.post('/:id/image', apiUserAuth, async (req, res) => {
+  //Get the advertisement from the database
+  const advertisement = await Advertisement.findById(req.params.id);
+  //Check if the advertisement exists
+  if (advertisement) {
+    //Check if the user making hte request is the owner of the advertisement
+    if (advertisement.user.toString() === req.session.auth.id) {
+      try {
+        //Upload images to S3 Bucket
+        uploadAdvertisementImages(req, res, function(error) {
+          if (error) {
+            return res.status(400).send({ response: error.message });
+          } else {
+            //Save S3 Bucket Images' href to database
+            req.files.forEach(img => {
+              AdvertisementImage.create({
+                href: img.location,
+                user: req.session.auth.id
+              }).then(image => {
+                //Update the Advertisement Images Array
+                Advertisement.findByIdAndUpdate(req.params.id, {
+                  $push: { images: image._id }
+                }).exec();
+              });
+            });
+            return res.send({ response: 'Succesfully uploaded image.' });
+          }
+        });
+      } catch (error) {
+        return res.status(500).send({ response: error });
+      }
+    } else {
+      return res.status(401).send({ response: 'You are not authorized.' });
+    }
+  } else {
+    return res.status(404).send({ response: 'Advertisement was not found.' });
+  }
+});
+
+router.post('/image/:id/delete', apiUserAuth, async (req, res) => {
+  const image = await AdvertisementImage.findById(req.params.id);
+  if (image) {
+    if (image.user.toString() === req.session.auth.id) {
+      AdvertisementImage.findByIdAndRemove(req.params.id, error => {
+        if (error) {
+          return res.status(500).send({ response: error });
+        } else {
+          return res.send({ response: 'Sucessfully deleted image.' });
+        }
+      });
+    } else {
+      return res.status(401).send({ response: 'Unathorized access.' });
+    }
+  } else {
+    return res.status(404).send({ response: 'Image does not exist.' });
   }
 });
 

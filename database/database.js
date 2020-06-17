@@ -6,7 +6,8 @@ const connect = () => {
 
   mongoose.connect(connectionString, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false 
   });
 
   mongoose.connection.on('connected', () => {

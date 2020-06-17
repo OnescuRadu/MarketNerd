@@ -51,7 +51,9 @@ router.post('/register', async (req, res) => {
     .then(async () => {
       if (password === passwordConfirmation) {
         try {
-          const existingUser = await User.findOne({ email: email });
+          const existingUser = await User.findOne({
+            $or: [{ email: email }, { phoneNumber: phoneNumber }]
+          });
           if (!existingUser) {
             const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -76,7 +78,9 @@ router.post('/register', async (req, res) => {
               }
             });
           } else {
-            return res.status(400).send({ response: 'Email is already used.' });
+            return res
+              .status(400)
+              .send({ response: 'Email or phone number is already used.' });
           }
         } catch (error) {
           return res.status(500).send({ response: error });

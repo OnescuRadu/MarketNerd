@@ -35,11 +35,22 @@ const AdvertisementSchema = new mongoose.Schema(
       type: Boolean,
       required: true
     },
+    sold: {
+      type: Boolean,
+      default: false
+    },
+    deleted: {
+      type: Boolean,
+      default: false
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true
-    }
+    },
+    images: [
+      { type: mongoose.Schema.Types.ObjectId, ref: 'AdvertisementImage' }
+    ]
   },
   {
     timestamps: true

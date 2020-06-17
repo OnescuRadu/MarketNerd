@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const fs = require('fs');
+const Advertisement = require('../../models/Advertisement');
+const { clientUserAuth } = require('../../middleware/authMiddleware');
 
 const partialHeaderAuth = fs.readFileSync(
   './public/views/partials/header-auth.html',
@@ -13,17 +15,44 @@ const partialFooter = fs.readFileSync(
   './public/views/partials/footer.html',
   'utf8'
 );
-const newAdvertisementPage = fs.readFileSync(
-  './public/views/advertisement/new-advertisement.html',
-  'utf8'
-);
 const advertisementPage = fs.readFileSync(
   './public/views/advertisement/advertisement.html',
   'utf8'
 );
+const newAdvertisementPage = fs.readFileSync(
+  './public/views/advertisement/new-advertisement.html',
+  'utf8'
+);
+const editAdvertisementPage = fs.readFileSync(
+  './public/views/advertisement/edit-advertisement.html',
+  'utf8'
+);
+const userAdvertisementPage = fs.readFileSync(
+  './public/views/advertisement/user-advertisement.html',
+  'utf8'
+);
+const userOwnAdvertisementPage = fs.readFileSync(
+  './public/views/advertisement/user-own-advertisement.html',
+  'utf8'
+);
+const advertisementImagesPage = fs.readFileSync(
+  './public/views/advertisement/advertisement-images.html',
+  'utf8'
+);
+
+const error401Page = fs.readFileSync(
+  './public/views/error/error-401.html',
+  'utf8'
+);
+
+const error404Page = fs.readFileSync(
+  './public/views/error/error-404.html',
+  'utf8'
+);
+
 const marketPage = fs.readFileSync('./public/views/market/market.html', 'utf8');
 
-router.get('/advertisement', (req, res) => {
+router.get('/advertisement', clientUserAuth, (req, res) => {
   const header =
     req.session.auth === undefined ? partialHeaderAnon : partialHeaderAuth;
   return res.send(header + newAdvertisementPage + partialFooter);
@@ -33,6 +62,33 @@ router.get('/advertisement/:id', (req, res) => {
   const header =
     req.session.auth === undefined ? partialHeaderAnon : partialHeaderAuth;
   return res.send(header + advertisementPage + partialFooter);
+});
+
+router.get('/advertisement/user/:id', async (req, res) => {
+  const header =
+    req.session.auth === undefined ? partialHeaderAnon : partialHeaderAuth;
+  if (req.session.auth && req.session.auth.id === req.params.id) {
+    return res.send(header + userOwnAdvertisementPage + partialFooter);
+  }
+  return res.send(header + userAdvertisementPage + partialFooter);
+});
+
+router.get('/advertisement/:id/edit', clientUserAuth, async (req, res) => {
+  const advertisement = await Advertisement.findById(req.params.id);
+  if (req.session.auth.id === advertisement.user.toString()) {
+    return res.send(partialHeaderAuth + editAdvertisementPage + partialFooter);
+  }
+  return res.send(partialHeaderAuth + error401Page + partialFooter);
+});
+
+router.get('/advertisement/:id/images', clientUserAuth, async (req, res) => {
+  const advertisement = await Advertisement.findById(req.params.id);
+  if (req.session.auth.id === advertisement.user.toString()) {
+    return res.send(
+      partialHeaderAuth + advertisementImagesPage + partialFooter
+    );
+  }
+  return res.send(partialHeaderAuth + error401Page + partialFooter);
 });
 
 router.get('/market', (req, res) => {

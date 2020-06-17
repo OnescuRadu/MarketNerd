@@ -15,9 +15,8 @@
           action="/api/advertisement"
           method="POST"
           id="new-advertisement-form"
-          enctype="multipart/form-data"
         >
-          <p class="h4 mb-4">New Advertisement</p>
+          <p class="h4 mb-4">Edit Advertisement</p>
 
           <!-- Title -->
           <input
@@ -75,17 +74,9 @@
             >
           </div>
 
-          <!-- Images -->
-          <input
-            type="file"
-            class="form-control"
-            id="advertisement-image"
-            name="advertisement-image"
-          />
-
           <!-- Create button -->
           <button class="btn btn-default my-4 btn-block" type="submit">
-            Create
+            Update
           </button>
         </form>
 
@@ -103,4 +94,4 @@
     'NOTE: ON ADVERTISEMENT PAGE ADBLOCKER MAY BE BLOCKING THE SCRIPT FILE. ENSURE TO DISABLE ADBLOCK.'
   );
 </script>
-<script src="/js/views/advertisement/new-advertisement.js"></script>
+<script src="/js/views/advertisement/edit-advertisement.js"></script>

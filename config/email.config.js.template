@@ -1,0 +1,5 @@
+module.exports = {
+    EMAIL: "",
+    PASSWORD: ""
+}
+//The EMAIL ACCOUNT MUST HAVE THE "ALLOW LESS SECURE APPS" OPTION ACTIVATED

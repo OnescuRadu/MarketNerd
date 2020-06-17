@@ -1,17 +1,17 @@
-
 <!--START Advertisements Container-->
-<div class="container mt-5 py-5 z-depth-1" style="margin-bottom: 7.5em">
+<div class="container mt-5 py-5 z-depth-1">
   <!--Section: Content-->
   <section class="text-center">
     <!-- Section heading -->
-    <h3 class="font-weight-bold mb-5">Advertisement Details</h3>
-
-    <div class="row">
+    <h3 class="font-weight-bold mb-3">Advertisement Details</h3>
+    <hr />
+    <span id="advertisement-alert"></span>
+    <div class="row" id="advertisement-wrapper">
       <div class="col-lg-6">
         <!--Carousel Wrapper-->
         <div
           id="carousel-thumb1"
-          class="carousel slide carousel-fade carousel-thumbnails mb-5 pb-4"
+          class="carousel slide carousel-fade carousel-thumbnails mb-5"
           data-ride="carousel"
         >
           <!--Thumbnails-->
@@ -43,47 +43,12 @@
               class="carousel slide"
               data-ride="carousel"
             >
-              <!--Indicators-->
-              <ol class="carousel-indicators">
-                <li
-                  data-target="#carousel-example-1z"
-                  data-slide-to="0"
-                  class="active"
-                ></li>
-                <li data-target="#carousel-example-1z" data-slide-to="1"></li>
-                <li data-target="#carousel-example-1z" data-slide-to="2"></li>
-              </ol>
-              <!--/.Indicators-->
               <!--Slides-->
-              <div class="carousel-inner" role="listbox">
-                <!--First slide-->
-                <div class="carousel-item active">
-                  <img
-                    class="d-block w-100"
-                    src="https://mdbootstrap.com/img/Photos/Horizontal/Architecture/12-col/img%20(10).jpg"
-                    alt="First slide"
-                  />
-                </div>
-                <!--/First slide-->
-                <!--Second slide-->
-                <div class="carousel-item">
-                  <img
-                    class="d-block w-100"
-                    src="https://mdbootstrap.com/img/Photos/Horizontal/Architecture/12-col/img%20(11).jpg"
-                    alt="Second slide"
-                  />
-                </div>
-                <!--/Second slide-->
-                <!--Third slide-->
-                <div class="carousel-item">
-                  <img
-                    class="d-block w-100"
-                    src="https://mdbootstrap.com/img/Photos/Horizontal/Architecture/12-col/img%20(12).jpg"
-                    alt="Third slide"
-                  />
-                </div>
-                <!--/Third slide-->
-              </div>
+              <div
+                class="carousel-inner"
+                role="listbox"
+                id="advertisement-image-container"
+              ></div>
               <!--/.Slides-->
               <!--Controls-->
               <a
@@ -117,9 +82,10 @@
         </div>
       </div>
 
-      <div class="col-lg-5 text-center text-md-left">
+      <div class="col-lg-5 text-center text-md-left mt-5">
         <h2
           class="h2-responsive text-center text-md-left product-name font-weight-bold mb-1 ml-xl-0 ml-4"
+          id="advertisement-title"
         >
           iPad PRO
         </h2>
@@ -127,25 +93,32 @@
 
         <h3 class="h3-responsive text-center text-md-left mb-5 ml-xl-0 ml-4">
           <span class="font-weight-bold">
-            <strong>100 DKK</strong>
+            <strong id="advertisement-price">PRICE</strong>
+            <strong> DKK</strong>
           </span>
         </h3>
 
         <div class="font-weight-normal">
-          <p class="ml-xl-0 ml-4">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente
-            nesciunt atque nemo neque ut officiis nostrum incidunt maiores,
-            magni optio et sunt suscipit iusto nisi totam quis, nobis mollitia
-            necessitatibus.
+          <p class="ml-xl-0 ml-4" id="advertisement-description">
+            Description
           </p>
 
-          <p class="ml-xl-0 ml-4"><strong>Seller: </strong>John Doe</p>
-          <p class="ml-xl-0 ml-4"><strong>Location: </strong>Copenhagen</p>
-          <p class="ml-xl-0 ml-4"><strong>Used: </strong>Yes</p>
+          <p class="ml-xl-0 ml-4">
+            <strong>Seller: </strong
+            ><a href="#" id="advertisement-seller-profile"
+              ><span id="advertisement-seller"></span
+            ></a>
+          </p>
+          <p class="ml-xl-0 ml-4">
+            <strong>Location: </strong><span id="advertisement-location"></span>
+          </p>
+          <p class="ml-xl-0 ml-4">
+            <strong>Used: </strong><span id="advertisement-used"></span>
+          </p>
 
           <div class="row mt-3 mb-4">
-            <div class="col ml-3">
-              <button class="btn btn-default btn-rounded">
+            <div class="col ml-0">
+              <button class="btn btn-default btn-rounded ml-0">
                 Contact seller
               </button>
             </div>
@@ -158,9 +131,39 @@
 </div>
 <!--END Advertisements Container-->
 
+<!--START Contact Seller Container-->
+<div class="container mt-3 py-5 z-depth-1" style="margin-bottom: 7.5em">
+  <!--Section: Content-->
+  <section class="text-center">
+    <!-- Section heading -->
+    <h3 class="font-weight-bold mb-3">Contact Seller</h3>
+    <!--Alert-->
+    <div class="alert alert-danger text-center" role="alert"></div>
+    <!--Alert-->
+    <hr />
+    <div class="row">
+      <div class="col">
+        <form id="contact-seller-form">
+          <textarea
+            type="text"
+            class="form-control"
+            rows="5"
+            id="contact-seller-message"
+            placeholder="Enter your message here."
+          ></textarea>
+          <button type="submit" class="btn btn-default btn-rounded mt-4">
+            Send message
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+  <!--Section: Content-->
+</div>
+<!--END Contact Seller Container-->
 <script>
   console.log(
     'NOTE: ON ADVERTISEMENT PAGE ADBLOCKER MAY BE BLOCKING THE SCRIPT FILE. ENSURE TO DISABLE ADBLOCK.'
   );
 </script>
-<script src="./advertisement.js"></script>
+<script src="/js/views/advertisement/advertisement.js"></script>
