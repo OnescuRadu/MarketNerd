@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const City = require('../models/City');
 
+//GET - Method
+//Retrieves all the cities
 router.get('/', async (req, res) => {
   try {
     const cities = await City.find();
@@ -10,6 +12,8 @@ router.get('/', async (req, res) => {
   }
 });
 
+//GET - Method
+//Retrieves a city by id
 router.get('/:id', async (req, res) => {
   try {
     const city = await City.findById(req.params.id);

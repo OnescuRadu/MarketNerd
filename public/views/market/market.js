@@ -5,6 +5,7 @@ $(function() {
   const advertisementCategory = $('#advertisement-category');
   let advertisementURL = '/api/advertisement';
 
+  //Method that gets all the advertisements and appends them to the page
   const getAdvertisements = () => {
     $.get(advertisementURL)
       .done(data => {
@@ -69,6 +70,7 @@ $(function() {
       });
   };
 
+  //If categoryId exists get the category by id and then get all the advertisements
   if (categoryId) {
     $.get(`/api/category/${categoryId}`)
       .done(data => {

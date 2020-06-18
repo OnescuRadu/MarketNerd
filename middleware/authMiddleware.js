@@ -1,5 +1,6 @@
 const fs = require('fs');
 
+//--Views
 const partialHeaderAuth = fs.readFileSync(
   './public/views/partials/header-auth.html',
   'utf8'
@@ -17,6 +18,7 @@ const error401Page = fs.readFileSync(
   'utf8'
 );
 
+//--API Authentication Middleware
 const apiUserAuth = (req, res, next) => {
   if (req.session.auth && req.session.auth.id) {
     return next();
@@ -37,6 +39,7 @@ const apiAdminUserAuth = (req, res, next) => {
   }
 };
 
+//--Client Authentication Middleware
 const clientAnonymousAuth = (req, res, next) => {
   if (!req.session.auth) {
     return next();

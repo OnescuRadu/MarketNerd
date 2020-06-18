@@ -11,6 +11,8 @@ const {
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+//POST - Method
+//Logs in user
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -37,6 +39,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
+//POST - Method
+//Registers user
 router.post('/register', async (req, res) => {
   const {
     email,
@@ -47,18 +51,24 @@ router.post('/register', async (req, res) => {
     passwordConfirmation
   } = req.body;
 
+  //Validate the register data
   validate(req.body, validationRules, validationMessages)
     .then(async () => {
+      //Check if the passwords are the same
       if (password === passwordConfirmation) {
         try {
           const existingUser = await User.findOne({
             $or: [{ email: email }, { phoneNumber: phoneNumber }]
           });
+          //Checks if a user exists already with the same email or phoneNumber
           if (!existingUser) {
+            //Hash the password
             const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+            //Find the role having the title 'User'
             const userRole = await Role.findOne({ title: 'User' });
 
+            //Create the user data
             const userData = {
               email: email,
               firstName: firstName,
@@ -68,6 +78,7 @@ router.post('/register', async (req, res) => {
               role: userRole.id
             };
 
+            //Insert the user data into the database
             User.create(userData, error => {
               if (error) {
                 return res.status(500).send({ response: error });
@@ -94,6 +105,8 @@ router.post('/register', async (req, res) => {
     });
 });
 
+//GET - Method
+//Logs out user
 router.get('/logout', (req, res) => {
   req.session.destroy();
   return res.send({ response: 'Succesfully logged out.' });

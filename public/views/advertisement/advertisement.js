@@ -1,4 +1,5 @@
 $(function() {
+  //Page Items
   const title = $('#advertisement-title');
   const price = $('#advertisement-price');
   const description = $('#advertisement-description');
@@ -11,8 +12,11 @@ $(function() {
   const advertisementImageContainer = $('#advertisement-image-container');
   const advertisementId = window.location.href.split('/').pop();
   let userId = '';
+
   advertisementWrapper.hide();
   advertisementAlert.hide();
+
+  //Get the advertisement by id and appends its data to the page
   $.get(`/api/advertisement/${advertisementId}`)
     .done(data => {
       if (data.response) {
@@ -51,26 +55,6 @@ $(function() {
             </div>`);
           });
         }
-
-        // <!--Second slide-->
-        // <div class="carousel-item">
-        //   <img
-        //     class="d-block w-100"
-        //     src="https://mdbootstrap.com/img/Photos/Horizontal/Architecture/12-col/img%20(11).jpg"
-        //     alt="Second slide"
-        //   />
-        // </div>
-        // <!--/Second slide-->
-        // <!--Third slide-->
-        // <div class="carousel-item">
-        //   <img
-        //     class="d-block w-100"
-        //     src="https://mdbootstrap.com/img/Photos/Horizontal/Architecture/12-col/img%20(12).jpg"
-        //     alt="Third slide"
-        //   />
-        // </div>
-        // <!--/Third slide-->
-
         advertisementWrapper.show();
         userId = data.response.user._id;
       } else {
@@ -86,6 +70,8 @@ $(function() {
     });
 
   $('.alert').hide();
+
+  //On contact seller form submit
   $('#contact-seller-form').submit(event => {
     event.preventDefault();
 

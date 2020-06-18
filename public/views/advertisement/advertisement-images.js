@@ -2,6 +2,7 @@ $(function() {
   const advertisementId = window.location.href.split('/').reverse()[1];
   const imagesTableBody = $('#images-table-body');
 
+  //Get the advertisement and display its images
   $.get(`/api/advertisement/${advertisementId}`)
     .done(data => {
       data.response.images.map(image => {
@@ -16,11 +17,15 @@ $(function() {
       console.log(fail);
     });
 
+  //On delete image button click
   $(document).on('click', '.delete-image-button', event => {
     const imageId = $(event.target).data('image');
 
-    $.post(`/api/advertisement/image/${imageId}/delete`)
-      .done(data => {
+    $.ajax({
+      type: 'DELETE',
+      url: `/api/advertisement/image/${imageId}`,
+
+      success: function(data) {
         $('.alert-container')
           .append(`<div class="alert alert-success text-center" role="alert">
           <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -29,16 +34,18 @@ $(function() {
         setTimeout(function() {
           location.reload();
         }, 3000);
-      })
-      .fail(error => {
+      },
+      error: function(error) {
         $('.alert-container')
           .append(`<div class="alert alert-danger text-center" role="alert">
           <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             ${error}
           </div>`);
-      });
+      }
+    });
   });
 
+  //On upload images form submit
   $('#upload-images-form').submit(function(event) {
     event.preventDefault();
     const formData = new FormData($(this)[0]);

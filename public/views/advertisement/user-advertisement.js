@@ -4,6 +4,7 @@ $(function() {
   const advertisementUser = $('#advertisement-user');
   const userAdvertisementURL = `/api/advertisement/user/${userId}`;
 
+  //Method that gets all the advertisements of the user and append them to the page
   const getAdvertisements = () => {
     $.get(userAdvertisementURL)
       .done(data => {
@@ -67,6 +68,7 @@ $(function() {
       });
   };
 
+  //If the userId exists get all the advertisements else append an error message
   if (userId) {
     getAdvertisements();
   } else {

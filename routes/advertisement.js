@@ -1,5 +1,5 @@
 const router = require('express').Router();
-let aws = require('aws-sdk');
+const aws = require('aws-sdk');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const awsConfig = require('../config/aws.config');
@@ -16,14 +16,17 @@ const {
   messages: validationMessages
 } = require('../validation/advertisementValidation');
 
+//Set the AWS Keys
 aws.config.update({
   secretAccessKey: awsConfig.SECRET_ACCESS_KEY,
   accessKeyId: awsConfig.ACCESS_KEY_ID,
   region: awsConfig.REGION
 });
 
+//Initialize the S3 Dependency
 const s3 = new aws.S3();
 
+//Initialize multer
 const upload = multer({
   storage: multerS3({
     s3: s3,
@@ -46,6 +49,8 @@ const upload = multer({
   }
 });
 
+//POST - Method
+//Creates a new advertisement
 router.post('/', apiUserAuth, async (req, res) => {
   const {
     title,
@@ -63,6 +68,7 @@ router.post('/', apiUserAuth, async (req, res) => {
   }
   req.body.used = usedStatus;
 
+  //Validate the incoming data
   validate(req.body, validationRules, validationMessages)
     .then(async () => {
       try {
@@ -118,6 +124,8 @@ router.post('/', apiUserAuth, async (req, res) => {
     });
 });
 
+//GET - Method
+//Gets an advertisement by id
 router.get('/:id', async (req, res) => {
   try {
     const advertisements = await Advertisement.findOne({
@@ -135,6 +143,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+//GET - Method
+//Gets all the advertisements
 router.get('/', async (req, res) => {
   const { page = 1, limit = 10, category, subcategory } = req.query;
   try {
@@ -188,6 +198,8 @@ router.get('/', async (req, res) => {
   }
 });
 
+//GET - Method
+//Gets all the advertisement of an user
 router.get('/user/:id', async (req, res) => {
   try {
     const advertisements = await Advertisement.find({
@@ -205,6 +217,8 @@ router.get('/user/:id', async (req, res) => {
   }
 });
 
+//PATCH - Method
+//Updates an advertisement
 router.patch('/:id', apiUserAuth, (req, res) => {
   const {
     title,
@@ -290,6 +304,8 @@ router.patch('/:id', apiUserAuth, (req, res) => {
     });
 });
 
+//DELETE - Method
+//Delete an advertisement by id
 router.delete('/:id', apiUserAuth, async (req, res) => {
   try {
     //Find the advertisement
@@ -317,6 +333,8 @@ router.delete('/:id', apiUserAuth, async (req, res) => {
   }
 });
 
+//POST - Method
+//Mark an advertisement as sold
 router.post('/:id/sold', apiUserAuth, async (req, res) => {
   try {
     //Find the advertisement
@@ -353,6 +371,8 @@ router.post('/:id/sold', apiUserAuth, async (req, res) => {
 
 const uploadAdvertisementImages = upload.array('advertisement-image');
 
+//POST - Method
+//Upload images to an advertisement
 router.post('/:id/image', apiUserAuth, async (req, res) => {
   //Get the advertisement from the database
   const advertisement = await Advertisement.findById(req.params.id);
@@ -392,7 +412,9 @@ router.post('/:id/image', apiUserAuth, async (req, res) => {
   }
 });
 
-router.post('/image/:id/delete', apiUserAuth, async (req, res) => {
+//DELETE - Method
+//Delete an image
+router.delete('/image/:id', apiUserAuth, async (req, res) => {
   const image = await AdvertisementImage.findById(req.params.id);
   if (image) {
     if (image.user.toString() === req.session.auth.id) {

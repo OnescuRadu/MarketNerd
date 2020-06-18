@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const Category = require('../models/Category');
 
+//GET - Method
+//Retrieves all the categories
 router.get('/', async (req, res) => {
   try {
     const categories = await Category.find();
@@ -10,6 +12,8 @@ router.get('/', async (req, res) => {
   }
 });
 
+//GET - Method
+//Retrieves a category by id
 router.get('/:id', async (req, res) => {
   try {
     const categories = await Category.findById(req.params.id);

@@ -5,17 +5,23 @@ const Advertisement = require('../models/Advertisement');
 const { apiUserAuth } = require('../middleware/authMiddleware');
 const emailConfig = require('../config/email.config');
 
+//GET - Method
+//Retrieves the current logged in user
 router.get('/', apiUserAuth, (req, res) => {
   return res.send({ response: req.session.auth });
 });
 
+//POST - Method
+//Sends email to user
 router.post('/:id/mail', apiUserAuth, async (req, res) => {
   const { message, advertisementId } = req.body;
   const userRecipient = await User.findById(req.params.id);
   const userSender = await User.findById(req.session.auth.id);
   const advertisement = await Advertisement.findById(advertisementId);
 
+  //If the recipient user exists
   if (userRecipient) {
+    //If the advertisement exists
     if (advertisement) {
       //Create the email
       const mailOptions = {
@@ -27,7 +33,6 @@ router.post('/:id/mail', apiUserAuth, async (req, res) => {
         Senders mail: ${userSender.email}` //set the message
       };
 
-      //Send the email using the mailOptions object created
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -36,11 +41,11 @@ router.post('/:id/mail', apiUserAuth, async (req, res) => {
         }
       });
 
+      //Send the email using the mailOptions object created
       transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
           return res.status(500).send({ response: error });
         } else {
-          //Send response
           return res.send({ response: 'Successfully sent email.' });
         }
       });

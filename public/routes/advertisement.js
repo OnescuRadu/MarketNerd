@@ -3,6 +3,7 @@ const fs = require('fs');
 const Advertisement = require('../../models/Advertisement');
 const { clientUserAuth } = require('../../middleware/authMiddleware');
 
+//--Views
 const partialHeaderAuth = fs.readFileSync(
   './public/views/partials/header-auth.html',
   'utf8'
@@ -45,25 +46,28 @@ const error401Page = fs.readFileSync(
   'utf8'
 );
 
-const error404Page = fs.readFileSync(
-  './public/views/error/error-404.html',
-  'utf8'
-);
-
 const marketPage = fs.readFileSync('./public/views/market/market.html', 'utf8');
 
+//--Routes for Frontend
+
+//GET Method
+//Gets the advertisement page
 router.get('/advertisement', clientUserAuth, (req, res) => {
   const header =
     req.session.auth === undefined ? partialHeaderAnon : partialHeaderAuth;
   return res.send(header + newAdvertisementPage + partialFooter);
 });
 
+//GET Method
+//Gets a specific advertisement's page
 router.get('/advertisement/:id', (req, res) => {
   const header =
     req.session.auth === undefined ? partialHeaderAnon : partialHeaderAuth;
   return res.send(header + advertisementPage + partialFooter);
 });
 
+//GET Method
+//Gets the user's advertisements page
 router.get('/advertisement/user/:id', async (req, res) => {
   const header =
     req.session.auth === undefined ? partialHeaderAnon : partialHeaderAuth;
@@ -73,6 +77,8 @@ router.get('/advertisement/user/:id', async (req, res) => {
   return res.send(header + userAdvertisementPage + partialFooter);
 });
 
+//GET Method
+//Gets the edit advertisement page
 router.get('/advertisement/:id/edit', clientUserAuth, async (req, res) => {
   const advertisement = await Advertisement.findById(req.params.id);
   if (req.session.auth.id === advertisement.user.toString()) {
@@ -81,6 +87,8 @@ router.get('/advertisement/:id/edit', clientUserAuth, async (req, res) => {
   return res.send(partialHeaderAuth + error401Page + partialFooter);
 });
 
+//GET Method
+//Gets the advertisement's images page
 router.get('/advertisement/:id/images', clientUserAuth, async (req, res) => {
   const advertisement = await Advertisement.findById(req.params.id);
   if (req.session.auth.id === advertisement.user.toString()) {
@@ -91,6 +99,8 @@ router.get('/advertisement/:id/images', clientUserAuth, async (req, res) => {
   return res.send(partialHeaderAuth + error401Page + partialFooter);
 });
 
+//GET Method
+//Gets the market page
 router.get('/market', (req, res) => {
   const header =
     req.session.auth === undefined ? partialHeaderAnon : partialHeaderAuth;
