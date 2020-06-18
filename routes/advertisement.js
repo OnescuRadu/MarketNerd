@@ -422,6 +422,19 @@ router.delete('/image/:id', apiUserAuth, async (req, res) => {
         if (error) {
           return res.status(500).send({ response: error });
         } else {
+          const imageKey = image.href.split('/').pop();
+          console.log(imageKey);
+          s3.deleteObject(
+            {
+              Bucket: awsConfig.BUCKET,
+              Key: imageKey
+            },
+            (error, data) => {
+              if (error) {
+                console.error(`There was an error deleting file ${imageKey}.`);
+              }
+            }
+          );
           return res.send({ response: 'Sucessfully deleted image.' });
         }
       });
