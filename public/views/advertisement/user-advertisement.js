@@ -20,7 +20,11 @@ $(function() {
           <div class="view view-cascade overlay">
             <img
               class="card-img-top"
-              src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/img%20(4).jpg"
+              src="${
+                advertisement.images.length !== 0
+                  ? advertisement.images[0].href
+                  : 'https://increasify.com.au/wp-content/uploads/2016/08/default-image.png'
+              }"
               alt=""
             />
             <a href="/advertisement/${advertisement._id}">
